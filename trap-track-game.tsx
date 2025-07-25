@@ -195,6 +195,7 @@ export default function TrapTrackGame() {
   const [showDiceAnimation, setShowDiceAnimation] = useState(false)
   const [gameStats, setGameStats] = useState({ totalTrapsHit: 0, totalRolls: 0, gameNumber: 1 })
   const [showNewGameConfirm, setShowNewGameConfirm] = useState(false)
+  const [isOnCooldown, setIsOnCooldown] = useState(false)
 
   useEffect(() => {
     setupNewGame()
@@ -372,6 +373,11 @@ export default function TrapTrackGame() {
     const nextIndex = (currentPlayerIndex + 1) % players.length
     setCurrentPlayerIndex(nextIndex)
     setGameMessage(`${players[nextIndex].name}'s turn! Roll for glory! 🎲`)
+    
+    setIsOnCooldown(true)
+    setTimeout(() => {
+      setIsOnCooldown(false)
+    }, 5000)
   }
 
   const handleNewGameClick = () => {
@@ -401,6 +407,7 @@ export default function TrapTrackGame() {
     setGameMessage("🎮 Fresh start! Player 1, show us what you've got!")
     setGameStats((prev) => ({ ...prev, gameNumber: prev.gameNumber + 1 }))
     setShowNewGameConfirm(false)
+    setIsOnCooldown(false) 
 
     setupNewGame()
   }
@@ -524,20 +531,28 @@ export default function TrapTrackGame() {
               <div className="flex flex-col items-center gap-3">
                 <Button
                   onClick={rollTheDice}
-                  disabled={isDiceRolling || isPlayerMoving}
+                  disabled={isDiceRolling || isPlayerMoving || isOnCooldown}
                   size="lg"
                   className={`flex items-center gap-3 text-lg px-8 py-4 transition-all duration-300 ${
                     showDiceAnimation ? "scale-110 rotate-12" : ""
                   } hover:scale-105 active:scale-95`}
                 >
                   <CurrentDiceIcon className={`w-8 h-8 ${isDiceRolling || showDiceAnimation ? "animate-spin" : ""}`} />
-                  {isDiceRolling ? "🎲 Rolling..." : isPlayerMoving ? "🏃 Moving..." : "🎲 ROLL DICE!"}
+                  {isDiceRolling ? "🎲 Rolling..." : isPlayerMoving ? "🏃 Moving..." : isOnCooldown ? "⏳ Wait..." : "🎲 ROLL DICE!"}
                 </Button>
 
-                {!isDiceRolling && !isPlayerMoving && (
+                {!isDiceRolling && !isPlayerMoving && !isOnCooldown && (
                   <div className="text-center">
                     <div className="text-sm text-gray-600 animate-pulse">
                       {players[currentPlayerIndex].name}'s moment of truth!
+                    </div>
+                  </div>
+                )}
+                
+                {isOnCooldown && (
+                  <div className="text-center">
+                    <div className="text-sm text-orange-600 animate-pulse">
+                      ⏳ Please wait 5 seconds before next roll...
                     </div>
                   </div>
                 )}
