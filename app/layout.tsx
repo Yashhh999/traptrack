@@ -24,7 +24,19 @@ html {
 }
         `}</style>
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <footer className="mt-8 py-4 text-center text-sm text-gray-500">
+          <a 
+            href="https://github.com/Yashhh999/traptrack" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="hover:text-gray-700 underline"
+          >
+           Made By Yash
+          </a>
+        </footer>
+      </body>
     </html>
   )
 }
